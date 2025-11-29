@@ -8,14 +8,28 @@ echo "🚀 Initializing ReckNap Database...\n<br>";
 try {
     // Connect to database using Railway environment variables
     $host = $_ENV['MYSQL_HOST'] ?? 'localhost';
-    $database = $_ENV['MYSQL_DATABASE'] ?? 'recknap_reports';
+    $database = $_ENV['MYSQL_DATABASE'] ?? 'railway';
     $username = $_ENV['MYSQL_USER'] ?? 'root';
     $password = $_ENV['MYSQL_PASSWORD'] ?? '';
     $port = $_ENV['MYSQL_PORT'] ?? '3306';
     
-    echo "🔌 Connecting to: $host:$port/$database as $username\n<br>";
-    
-    $pdo = new PDO("mysql:host=$host;port=$port;dbname=$database", $username, $password);
+    // Check if we have a DATABASE_URL (Railway often provides this)
+    if (isset($_ENV['DATABASE_URL'])) {
+        echo "🔗 Using DATABASE_URL: " . substr($_ENV['DATABASE_URL'], 0, 20) . "...\n<br>";
+        $pdo = new PDO($_ENV['DATABASE_URL']);
+    } else {
+        echo "🔗 Using individual connection parameters\n<br>";
+        echo "🔌 Connecting to: $host:$port/$database as $username\n<br>";
+        
+        // Try connection with different options for Railway
+        $options = [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_TIMEOUT => 30,
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"
+        ];
+        
+        $pdo = new PDO("mysql:host=$host;port=$port;dbname=$database;charset=utf8", $username, $password, $options);
+    }
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
     echo "✅ Connected to database successfully\n<br>";
