@@ -1,17 +1,17 @@
 [phases.setup]
 nixPkgs = [
-    "php82", 
-    "php82Extensions.mbstring", 
-    "php82Extensions.curl", 
-    "php82Extensions.zip",
-    "php82Extensions.gd",
-    "php82Extensions.pdo",
-    "php82Extensions.pdo_mysql",
-    "php82Packages.composer"
+    "php83", 
+    "php83Extensions.mbstring", 
+    "php83Extensions.curl", 
+    "php83Extensions.zip",
+    "php83Extensions.gd",
+    "php83Extensions.pdo",
+    "php83Extensions.pdo_mysql",
+    "php83Packages.composer"
 ]
 
 [phases.install]
-cmds = ["composer install --no-dev --optimize-autoloader"]
+cmds = ["COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader"]
 
 [phases.build]
 cmds = ["echo 'Build phase complete'"]
